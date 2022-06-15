@@ -1,6 +1,6 @@
 # react-ts-admin
 
-这是一个利用 react18 + typescript 实现的 Web 后台管理系统模板
+这是一个利用 react18 + typescript 实现的 博客后台管理系统
 
 ## 特性
 
@@ -23,7 +23,7 @@
 
 - 获取项目代码
   ```
-  git clone https://github.com/sunburst89757/react-ts-admin.git
+  git clone https://github.com/sunburst89757/blog-admin
   ```
 - 安装依赖
   ```
@@ -33,9 +33,9 @@
   ```
   npm run start
   ```
-  - 登录使用
+- 登录使用
   ```
-  test: 123456
+  admin: admin
   ```
 - 打包上线
   ```

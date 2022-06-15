@@ -1,4 +1,4 @@
-# react-ts-admin
+# blog-admin
 
 这是一个利用 react18 + typescript 实现的 博客后台管理系统
 

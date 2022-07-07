@@ -148,6 +148,8 @@ const generateRouter = (routes: RouteObject[]) => {
 };
 // 路由拦截器组件
 const RouterBeforeEach = ({ children, role, title }: interceptOBj) => {
+  console.log("路由重载");
+
   const userInfo = useAppSelector((state) => state.user.userInfo);
   // 验证是否登录（刷新）
   const authLogin = useMemo(() => {

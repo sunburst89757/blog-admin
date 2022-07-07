@@ -1,4 +1,5 @@
 import { myRequest } from "../service";
+import { IEndRoute, roleInfo } from "../store/types";
 
 export interface requestParams {
   username: string;
@@ -18,8 +19,14 @@ export function login(params: requestParams) {
   });
 }
 export function getUserRoleInfo(params: number) {
-  return myRequest({
+  return myRequest<number, roleInfo>({
     url: `/sys/user/getUserRoleInfo/${params}`,
+    method: "get"
+  });
+}
+export function getUserMenuList() {
+  return myRequest<any, IEndRoute[]>({
+    url: `/sys/user/getUserMenuList`,
     method: "get"
   });
 }

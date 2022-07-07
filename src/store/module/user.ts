@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "..";
 import { Res } from "../../api/user";
-import { stateType } from "../types";
+import { roleInfo, stateType } from "../types";
 import { cache } from "../../utils/localStorage";
 const initialState: stateType = {
   userInfo: {
@@ -33,6 +33,15 @@ const userSlice = createSlice({
       state.userInfo.username = nickName;
       cache.setItem("token", token);
     },
+    updateRoleInfo: (state, action: PayloadAction<roleInfo>) => {
+      const { name, nickname, status } = action.payload;
+      // 后台这里使用的名字叫id
+      const roleId = (action.payload as any).id as number;
+      state.roleInfo.name = name;
+      state.roleInfo.nickname = nickname;
+      state.roleInfo.roleId = roleId;
+      state.roleInfo.status = status;
+    },
     changeisShowReloginModal: (state) => {
       state.isShowReloginModal = !state.isShowReloginModal;
     },
@@ -63,7 +72,8 @@ export const {
   incrementDatedNum,
   resetDatedNum,
   resetInitialState,
-  setLoading
+  setLoading,
+  updateRoleInfo
 } = userSlice.actions;
 // 导出reducer
 export const userReducer = userSlice.reducer;

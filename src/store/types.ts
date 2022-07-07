@@ -7,17 +7,17 @@ export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 export interface userInfo {
   /* 用户信息 */
   userId: number;
-  role: string;
   username: string;
+  role: string;
 }
 
-type roleInfo = {
+export interface roleInfo {
   /* 角色信息 */
   roleId: number;
   name: string;
   nickname: string;
   status: number;
-};
+}
 export interface stateType {
   userInfo: userInfo;
   roleInfo: roleInfo;
@@ -32,5 +32,5 @@ export interface IEndRoute {
   parentId: number;
   icon: string;
   path: string;
-  children?: IEndRoute;
+  children?: IEndRoute[];
 }

@@ -8,6 +8,7 @@ export interface Res {
   token: string;
   nickName: string;
   userId: number;
+  username: string;
 }
 export function login(params: requestParams) {
   return myRequest<requestParams, Res>({
@@ -16,16 +17,15 @@ export function login(params: requestParams) {
     method: "post"
   });
 }
+export function getUserRoleInfo(params: number) {
+  return myRequest({
+    url: `/sys/user/getUserRoleInfo/${params}`,
+    method: "get"
+  });
+}
 export function logout() {
   return myRequest({
     url: "/login/logout",
     method: "post"
-  });
-}
-
-export function getAreaList() {
-  return myRequest({
-    url: "/area/list",
-    method: "get"
   });
 }

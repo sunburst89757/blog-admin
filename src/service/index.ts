@@ -5,8 +5,8 @@ import { RequestConfig } from "./types";
 interface IMyResponse<T> {
   code: number;
   message: string;
-  success: boolean;
   data: T;
+  success: boolean;
 }
 // 取出其中的data
 // type IRealResponse<T> = Pick<IMyResponse<T>, "data">;

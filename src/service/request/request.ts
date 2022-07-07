@@ -45,6 +45,7 @@ export class MyRequest {
       },
       (err) => {
         // console.log(err, "公共响应拦截失败");
+        store.dispatch(setLoading({ loading: false }));
         return Promise.reject(err);
       }
     );

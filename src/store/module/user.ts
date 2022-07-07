@@ -9,6 +9,12 @@ const initialState: stateType = {
     username: "",
     role: ""
   },
+  roleInfo: {
+    roleId: 0,
+    name: "",
+    nickname: "",
+    status: 0
+  },
   token: "",
   isShowReloginModal: false,
   datedNum: 0,

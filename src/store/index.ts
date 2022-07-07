@@ -4,6 +4,7 @@ import { combineReducers } from "redux";
 import storage from "redux-persist/lib/storage";
 import { tabsReducer } from "./module/tabs";
 import { userReducer } from "./module/user";
+import { permissionReducer } from "./module/permission";
 const persistConfig = {
   key: "root",
   storage
@@ -12,7 +13,8 @@ const persistedReducer = persistReducer(
   persistConfig,
   combineReducers({
     user: userReducer,
-    tabs: tabsReducer
+    tabs: tabsReducer,
+    permission: permissionReducer
   })
 );
 export const store = configureStore({

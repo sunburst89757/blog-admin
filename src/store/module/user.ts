@@ -52,8 +52,10 @@ const userSlice = createSlice({
       state.datedNum = 0;
     },
     resetInitialState: (state) => {
-      const { userInfo, datedNum, isShowReloginModal, token } = initialState;
+      const { userInfo, datedNum, isShowReloginModal, token, roleInfo } =
+        initialState;
       state.userInfo = userInfo;
+      state.roleInfo = roleInfo;
       state.datedNum = datedNum;
       state.isShowReloginModal = isShowReloginModal;
       state.token = token;

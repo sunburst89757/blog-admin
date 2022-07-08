@@ -2,12 +2,13 @@ import { Button, Checkbox, Form, Input } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import style from "./Login.module.scss";
 import { userType } from "./types";
-import { updateRoleInfo, updateUserInfo } from "../../store/module/user";
+import { updateUserInfo } from "../../store/module/user";
 import { useAppDispatch } from "../../store/types";
 import { useNavigate } from "react-router-dom";
 import { useCallback, useEffect } from "react";
 import { useRequest } from "ahooks";
-import { getUserRoleInfo, login } from "../../api/user";
+import { login } from "../../api/user";
+
 export function Login() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -15,9 +16,7 @@ export function Login() {
     manual: true,
     onSuccess: async (res) => {
       if (res.success) {
-        const { data } = await getUserRoleInfo(res.data.userId);
         dispatch(updateUserInfo(res.data));
-        dispatch(updateRoleInfo(data));
         navigate("/dashboard");
       }
     },

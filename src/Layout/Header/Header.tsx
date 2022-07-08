@@ -19,9 +19,10 @@ export function MyHeader({ isCollapse, onClick }: propType) {
   const { run: handleLogout } = useRequest(logout, {
     manual: true,
     onSuccess: () => {
-      cache.clear();
       navigate("/login");
       // 重置redux状态
+      cache.clear();
+
       reset();
     },
     onError: (err) => {

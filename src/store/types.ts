@@ -32,5 +32,6 @@ export interface IEndRoute {
   parentId: number;
   icon: string;
   path: string;
+  perms: any;
   children?: IEndRoute[];
 }

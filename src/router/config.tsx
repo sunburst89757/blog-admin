@@ -1,10 +1,17 @@
 import { ReactNode, useEffect, useMemo } from "react";
 import { RouteObject } from "react-router-dom";
+import { getUserMenuList, getUserMenuPerms } from "../api/permission";
+import { getUserRoleInfo } from "../api/user";
 import { LazyLoad } from "../components/LazyLoad";
 import { Redirect } from "../components/Redirect";
 import MyLayout from "../Layout";
 import { Login } from "../pages/Login";
-import { useAppSelector } from "../store/types";
+import {
+  updateEndPermission,
+  updateEndRoutes
+} from "../store/module/permission";
+import { updateRoleInfo } from "../store/module/user";
+import { useAppDispatch, useAppSelector } from "../store/types";
 import { cache } from "../utils/localStorage";
 
 type interceptOBj = {
@@ -149,22 +156,32 @@ const generateRouter = (routes: RouteObject[]) => {
 // 路由拦截器组件
 const RouterBeforeEach = ({ children, role, title }: interceptOBj) => {
   console.log("路由重载");
-
+  const dispatch = useAppDispatch();
   const userInfo = useAppSelector((state) => state.user.userInfo);
+  const roleInfo = useAppSelector((state) => state.user.roleInfo);
   // 验证是否登录（刷新）
   const authLogin = useMemo(() => {
     const token = cache.getItem("token");
     if (!token) {
       return false;
-      // } else {
-      //   if (!userInfo.role) {
-      //     // 说明没有获取用户的角色，第一次登录需要获取用户信息
-      //     dispatch(getUserInfoAction());
-      //   }
+    } else {
+      // 获取用户的角色 菜单路由 权限信息
+      if (!roleInfo.name) {
+        // 说明没有获取用户的角色，第一次登录需要获取用户信息 获取菜单和权限
+        getUserRoleInfo(userInfo.userId).then((res) => {
+          dispatch(updateRoleInfo(res.data));
+        });
+        getUserMenuList().then((res) => {
+          dispatch(updateEndRoutes(res.data));
+        });
+        getUserMenuPerms().then((res) => {
+          dispatch(updateEndPermission(res.data));
+        });
+      }
+      return true;
     }
     // 不用考虑刷新，因为role已经数据持久化了刷新不会丢失
-    return true;
-  }, []);
+  }, [dispatch, roleInfo.name, userInfo.userId]);
   // 验证权限路由
   const authRoute = useMemo(() => {
     if (!role || userInfo.role === "super-admin") {

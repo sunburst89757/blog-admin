@@ -75,13 +75,7 @@ const tabSlice = createSlice({
       state.activeTab = action.payload;
       state.menuActive = selectMenuActive(action.payload);
     },
-    resetInitialState: (state) => {
-      // 不能直接initialState 赋值给state
-      const { tabs, activeTab, menuActive } = initialState;
-      state.tabs = tabs;
-      state.activeTab = activeTab;
-      state.menuActive = menuActive;
-    }
+    resetInitialState: () => initialState
   }
 });
 

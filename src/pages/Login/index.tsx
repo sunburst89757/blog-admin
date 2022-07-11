@@ -2,21 +2,19 @@ import { Button, Checkbox, Form, Input } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import style from "./Login.module.scss";
 import { userType } from "./types";
-import { updateUserInfo } from "../../store/module/user";
-import { useAppDispatch } from "../../store/types";
 import { useNavigate } from "react-router-dom";
 import { useCallback, useEffect } from "react";
 import { useRequest } from "ahooks";
 import { login } from "../../api/user";
+import { cache } from "../../utils/localStorage";
 
 export function Login() {
-  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { run: handleLogin } = useRequest((params: userType) => login(params), {
     manual: true,
     onSuccess: async (res) => {
       if (res.success) {
-        dispatch(updateUserInfo(res.data));
+        cache.setItem("token", res.data.token);
         navigate("/dashboard");
       }
     },

@@ -1,5 +1,5 @@
 import { myRequest } from "../service";
-import { roleInfo } from "../store/types";
+import { IUserInfo } from "../store/types";
 
 export interface requestParams {
   username: string;
@@ -18,9 +18,9 @@ export function login(params: requestParams) {
     method: "post"
   });
 }
-export function getUserRoleInfo(params: number) {
-  return myRequest<number, roleInfo>({
-    url: `/sys/user/getUserRoleInfo/${params}`,
+export function getUserInfo() {
+  return myRequest<number, IUserInfo>({
+    url: `/sys/user/getUserInfo`,
     method: "get"
   });
 }

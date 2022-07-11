@@ -1,19 +1,17 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "..";
-import { Res } from "../../api/user";
-import { roleInfo, stateType } from "../types";
+import { IUserInfo, stateType } from "../types";
 import { cache } from "../../utils/localStorage";
+
 const initialState: stateType = {
   userInfo: {
     userId: 0,
     username: "",
-    role: ""
-  },
-  roleInfo: {
-    roleId: 0,
-    name: "",
     nickname: "",
-    status: 0
+    email: "",
+    phone: "",
+    avater: "",
+    roleName: ""
   },
   token: "",
   isShowReloginModal: false,
@@ -24,23 +22,18 @@ const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    updateUserInfo: (state, action: PayloadAction<Res>) => {
-      const { token, userId, nickName } = action.payload;
-      state.token = token;
+    updateUserInfo: (state, action: PayloadAction<IUserInfo>) => {
+      const { userId, nickname, username, email, phone, avater, roleName } =
+        action.payload;
+      state.token = cache.getItem("token");
       state.userInfo.userId = userId;
       // 用户角色本来应该从action.payload里传递，新项目需要接口更改
-      state.userInfo.role = "super-admin";
-      state.userInfo.username = nickName;
-      cache.setItem("token", token);
-    },
-    updateRoleInfo: (state, action: PayloadAction<roleInfo>) => {
-      const { name, nickname, status } = action.payload;
-      // 后台这里使用的名字叫id
-      const roleId = (action.payload as any).id as number;
-      state.roleInfo.name = name;
-      state.roleInfo.nickname = nickname;
-      state.roleInfo.roleId = roleId;
-      state.roleInfo.status = status;
+      state.userInfo.roleName = roleName;
+      state.userInfo.username = username;
+      state.userInfo.avater = avater;
+      state.userInfo.email = email;
+      state.userInfo.nickname = nickname;
+      state.userInfo.phone = phone;
     },
     changeisShowReloginModal: (state) => {
       state.isShowReloginModal = !state.isShowReloginModal;
@@ -51,15 +44,7 @@ const userSlice = createSlice({
     resetDatedNum: (state) => {
       state.datedNum = 0;
     },
-    resetInitialState: (state) => {
-      const { userInfo, datedNum, isShowReloginModal, token, roleInfo } =
-        initialState;
-      state.userInfo = userInfo;
-      state.roleInfo = roleInfo;
-      state.datedNum = datedNum;
-      state.isShowReloginModal = isShowReloginModal;
-      state.token = token;
-    },
+    resetInitialState: () => initialState,
     setLoading: (state, action: PayloadAction<{ loading: boolean }>) => {
       state.loading = action.payload.loading;
     }
@@ -74,8 +59,7 @@ export const {
   incrementDatedNum,
   resetDatedNum,
   resetInitialState,
-  setLoading,
-  updateRoleInfo
+  setLoading
 } = userSlice.actions;
 // 导出reducer
 export const userReducer = userSlice.reducer;

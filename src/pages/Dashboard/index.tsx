@@ -5,8 +5,7 @@ import { useNavigate } from "react-router-dom";
 export default function Dashboard() {
   const navigate = useNavigate();
   const handleNavigate = useCallback(() => {
-    navigate("/salesManage/productManage");
-    console.log("点击/salesManage/productManage");
+    navigate("/systemSetting/userManage");
   }, [navigate]);
   return (
     <div>

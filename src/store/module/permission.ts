@@ -1,38 +1,40 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { IEndRoute } from "../types";
+import { RouteObject } from "react-router-dom";
+import { myRouter } from "../../router/config";
+const isIncludeRoute = (
+  route: RouteObject[],
+  routes: RouteObject[]
+): boolean => {
+  if (
+    routes[routes.length - 1].meta.title === route[route.length - 1].meta.title
+  ) {
+    return true;
+  }
+  return false;
+};
 type IPermissonType = {
-  endRoutes: IEndRoute[];
+  routes: RouteObject[];
   endPermission: string[];
 };
 const initialState: IPermissonType = {
-  endRoutes: [
-    {
-      name: "",
-      id: 0,
-      parentId: 0,
-      icon: "",
-      path: "",
-      perms: null
-    }
-  ],
+  routes: myRouter,
   endPermission: [""]
 };
 const permissonSlice = createSlice({
   name: "permission",
   initialState,
   reducers: {
-    updateEndRoutes: (state, action: PayloadAction<IEndRoute[]>) => {
-      state.endRoutes = action.payload;
+    addRoutes: (state, action: PayloadAction<RouteObject[]>) => {
+      if (!isIncludeRoute(action.payload, state.routes)) {
+        state.routes = [...state.routes, ...action.payload];
+      }
     },
     updateEndPermission: (state, action: PayloadAction<string[]>) => {
       state.endPermission = action.payload;
     },
-    resetInitialState: (state) => {
-      state.endPermission = initialState.endPermission;
-      state.endRoutes = initialState.endRoutes;
-    }
+    resetInitialState: () => initialState
   }
 });
-export const { updateEndRoutes, updateEndPermission, resetInitialState } =
+export const { addRoutes, updateEndPermission, resetInitialState } =
   permissonSlice.actions;
 export const permissionReducer = permissonSlice.reducer;

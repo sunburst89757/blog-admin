@@ -1,7 +1,6 @@
 import { Tabs } from "antd";
 import { useLocation, useNavigate, matchRoutes } from "react-router-dom";
 import { useUpdateEffect } from "ahooks";
-import { siderRoutes } from "../../../router/config";
 import {
   changeTab,
   removeTab,
@@ -16,6 +15,7 @@ export function MyTabs() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const location = useLocation();
+  const routes = useAppSelector((state) => state.permission.routes);
   const tabs = useAppSelector((state) => state.tabs.tabs);
   const tabActive = useAppSelector((state) => state.tabs.activeTab);
   const onTabClick = useCallback(
@@ -39,7 +39,7 @@ export function MyTabs() {
   }, [tabActive]);
   // 注释掉这个useEffect可以解决直接关闭页面，等token过期后访问这个页面报错
   useEffect(() => {
-    const matchRoute = matchRoutes(siderRoutes, location.pathname)!;
+    const matchRoute = matchRoutes(routes, location.pathname)!;
     const newTab: tabObject = {
       key: matchRoute[matchRoute.length - 1].pathname,
       title: matchRoute[matchRoute.length - 1].route.meta!.title
@@ -51,7 +51,7 @@ export function MyTabs() {
     } else {
       dispatch(changeTab(newTab));
     }
-  }, [location.pathname, dispatch, navigate]);
+  }, [location.pathname, dispatch, navigate, routes]);
   return (
     <Tabs
       type="editable-card"

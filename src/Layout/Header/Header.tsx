@@ -79,7 +79,12 @@ export function MyHeader({ isCollapse, onClick }: propType) {
             通知详情
           </Button>
         </div>
-        <Dropdown overlay={menu.current} trigger={["click"]} arrow>
+        <Dropdown
+          overlay={menu.current}
+          trigger={["click"]}
+          arrow
+          className={style.font}
+        >
           <a onClick={(e) => e.preventDefault()}>
             <Space className={style.userInfo}>{username}</Space>
           </a>

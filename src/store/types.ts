@@ -4,23 +4,19 @@ import { AppDispatch, RootState } from ".";
 export const useAppDispatch = () => useDispatch<AppDispatch>();
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 
-export interface userInfo {
+export interface IUserInfo {
   /* 用户信息 */
   userId: number;
   username: string;
-  role: string;
+  nickname: string;
+  email: string;
+  phone: string;
+  avater: string;
+  roleName: string;
 }
 
-export interface roleInfo {
-  /* 角色信息 */
-  roleId: number;
-  name: string;
-  nickname: string;
-  status: number;
-}
 export interface stateType {
-  userInfo: userInfo;
-  roleInfo: roleInfo;
+  userInfo: IUserInfo;
   token: string;
   isShowReloginModal: boolean;
   datedNum: number;

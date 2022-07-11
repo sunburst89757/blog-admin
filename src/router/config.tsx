@@ -1,34 +1,27 @@
 import { ReactNode, useEffect, useMemo } from "react";
 import { RouteObject } from "react-router-dom";
 import { getUserMenuList, getUserMenuPerms } from "../api/permission";
-import { getUserRoleInfo } from "../api/user";
+import { getUserInfo } from "../api/user";
 import { LazyLoad } from "../components/LazyLoad";
 import { Redirect } from "../components/Redirect";
 import MyLayout from "../Layout";
 import { Login } from "../pages/Login";
-import {
-  updateEndPermission,
-  updateEndRoutes
-} from "../store/module/permission";
-import { updateRoleInfo } from "../store/module/user";
-import { useAppDispatch, useAppSelector } from "../store/types";
+import { addRoutes, updateEndPermission } from "../store/module/permission";
+import { updateUserInfo } from "../store/module/user";
+import { IEndRoute, useAppDispatch, useAppSelector } from "../store/types";
 import { cache } from "../utils/localStorage";
 
 type interceptOBj = {
   children: ReactNode;
-  role?: string[];
   title: string;
 };
 /* 
-  配置说明
-  菜单路由：siderRoutes：根据用户角色生成对应的菜单
-  meta.role配置角色，没有这个属性的路由，表明全部都有这个菜单
-  用户的role是super-admin的拥有全部路由的访问权限
-  meta.role = ["admin","editor"]：表明admin editor super-admin拥有这三个菜单的访问权限
-  meta.role配置的是菜单显示的路由，系统的权限路由依靠路由拦截器实现
+  配置说明 meta 下的hidden icon perms
+  hidden 是否显示在菜单
+  perm 权限路由
   */
 //  菜单路由
-export const siderRoutes: RouteObject[] = [
+const siderRoutes: RouteObject[] = [
   {
     path: "/",
     element: <MyLayout></MyLayout>,
@@ -38,56 +31,9 @@ export const siderRoutes: RouteObject[] = [
     children: [
       {
         path: "dashboard",
-        element: <LazyLoad path="Dashboard"></LazyLoad>,
+        element: <LazyLoad path="/Dashboard"></LazyLoad>,
         meta: {
           title: "首页"
-        }
-      }
-    ]
-  },
-  {
-    path: "/salesManage",
-    element: <MyLayout></MyLayout>,
-    meta: {
-      title: "销售管理"
-    },
-    children: [
-      {
-        path: "customerManage",
-        element: <LazyLoad path="SalesManage/CustomerManage"></LazyLoad>,
-        meta: {
-          title: "顾客管理",
-          role: ["admin"]
-        }
-      },
-      {
-        path: "productManage",
-        element: <LazyLoad path="SalesManage/ProductManage"></LazyLoad>,
-        meta: {
-          title: "产品管理"
-        }
-      }
-    ]
-  },
-  {
-    path: "/purchaseManage",
-    element: <MyLayout></MyLayout>,
-    meta: {
-      title: "采购管理"
-    },
-    children: [
-      {
-        path: "areaManage",
-        element: <LazyLoad path="PurchaseManage/AreaManage"></LazyLoad>,
-        meta: {
-          title: "区域管理"
-        }
-      },
-      {
-        path: "supplierManage",
-        element: <LazyLoad path="PurchaseManage/SupplierManage"></LazyLoad>,
-        meta: {
-          title: "供应商管理"
         }
       }
     ]
@@ -106,21 +52,24 @@ const myRoutes: RouteObject[] = [
     path: "/login",
     element: <Login></Login>,
     meta: {
-      title: "登录"
+      title: "登录",
+      hidden: true
     }
   },
   {
     path: "/404",
-    element: <LazyLoad path="NotFound"></LazyLoad>,
+    element: <LazyLoad path="/NotFound"></LazyLoad>,
     meta: {
-      title: "404"
+      title: "404",
+      hidden: true
     }
   },
   {
     path: "*",
     element: <Redirect to="/404"></Redirect>,
     meta: {
-      title: "404"
+      title: "404",
+      hidden: true
     }
   },
   ...siderRoutes
@@ -136,16 +85,59 @@ const isInterceptRoute = (route: RouteObject): boolean => {
   }
   return true;
 };
+// 后端的路由结构生成前端需要的配置路由结构类似myRoutes
+const generateRouterForBackEnd = (routes: IEndRoute[]): RouteObject[] => {
+  const myRoutes: RouteObject[] = [];
+  routes.forEach((route) => {
+    let routeObj: RouteObject = {
+      path: "",
+      element: <MyLayout></MyLayout>,
+      meta: {
+        title: "",
+        icon: "",
+        perms: ""
+      }
+    };
+    routeObj.path = "/" + route.path;
+    routeObj.meta.icon = route.icon;
+    routeObj.meta.title = route.name;
+    routeObj.meta.perms = route.perms;
+    if (route.children && route.children.length > 0) {
+      routeObj.children = [];
+      route.children.forEach((childRoute) => {
+        let routeObj1: RouteObject = {
+          path: "",
+          element: <MyLayout></MyLayout>,
+          meta: {
+            title: "",
+            icon: "",
+            perms: ""
+          }
+        };
+        routeObj1.path = childRoute.path;
+        routeObj1.meta.icon = childRoute.icon;
+        routeObj1.meta.title = childRoute.name;
+        routeObj1.meta.perms = childRoute.perms;
+        routeObj1.element = (
+          <LazyLoad path={routeObj.path + "/" + routeObj1.path}></LazyLoad>
+        );
+        routeObj.children!.push(routeObj1);
+      });
+    }
+    myRoutes.push(routeObj!);
+  });
+  return myRoutes;
+};
 // 根据路由配置生成react router dom需要的路由结构
-const generateRouter = (routes: RouteObject[]) => {
+const generateRouterForReactRouter = (routes: RouteObject[]) => {
   return routes.map((route) => {
     if (route.children) {
-      route.children = generateRouter(route.children);
+      route.children = generateRouterForReactRouter(route.children);
     }
     // 路由拦截器 登录和授权页面不需要鉴权
     if (isInterceptRoute(route)) {
       route.element = (
-        <RouterBeforeEach role={route.meta.role} title={route.meta.title}>
+        <RouterBeforeEach title={route.meta.title}>
           {route.element}
         </RouterBeforeEach>
       );
@@ -154,11 +146,9 @@ const generateRouter = (routes: RouteObject[]) => {
   });
 };
 // 路由拦截器组件
-const RouterBeforeEach = ({ children, role, title }: interceptOBj) => {
-  console.log("路由重载");
+const RouterBeforeEach = ({ children, title }: interceptOBj) => {
   const dispatch = useAppDispatch();
   const userInfo = useAppSelector((state) => state.user.userInfo);
-  const roleInfo = useAppSelector((state) => state.user.roleInfo);
   // 验证是否登录（刷新）
   const authLogin = useMemo(() => {
     const token = cache.getItem("token");
@@ -166,13 +156,17 @@ const RouterBeforeEach = ({ children, role, title }: interceptOBj) => {
       return false;
     } else {
       // 获取用户的角色 菜单路由 权限信息
-      if (!roleInfo.name) {
-        // 说明没有获取用户的角色，第一次登录需要获取用户信息 获取菜单和权限
-        getUserRoleInfo(userInfo.userId).then((res) => {
-          dispatch(updateRoleInfo(res.data));
+      if (!userInfo.username) {
+        // 说明没有获取用户的角色，第一次登录需要获取用户信息 获取菜单和权限 | 或者说是刷新导致的
+        getUserInfo().then((res) => {
+          dispatch(updateUserInfo(res.data));
         });
         getUserMenuList().then((res) => {
-          dispatch(updateEndRoutes(res.data));
+          // 后端生成需要的路由结构
+          const accessibleRoutes = generateRouterForBackEnd(res.data);
+          // 生成react router需要的路由结构
+          const routes = generateRouterForReactRouter(accessibleRoutes);
+          dispatch(addRoutes(routes));
         });
         getUserMenuPerms().then((res) => {
           dispatch(updateEndPermission(res.data));
@@ -180,31 +174,11 @@ const RouterBeforeEach = ({ children, role, title }: interceptOBj) => {
       }
       return true;
     }
-    // 不用考虑刷新，因为role已经数据持久化了刷新不会丢失
-  }, [dispatch, roleInfo.name, userInfo.userId]);
-  // 验证权限路由
-  const authRoute = useMemo(() => {
-    if (!role || userInfo.role === "super-admin") {
-      return true;
-    }
-    return role.includes(userInfo.role);
-  }, [role, userInfo.role]);
+  }, [dispatch, userInfo.username]);
   useEffect(() => {
     document.title = title;
   });
-  return (
-    <div>
-      {authLogin ? (
-        authRoute ? (
-          children
-        ) : (
-          <Redirect to="/404"></Redirect>
-        )
-      ) : (
-        <Redirect to="/login"></Redirect>
-      )}
-    </div>
-  );
+  return <div>{authLogin ? children : <Redirect to="/login"></Redirect>}</div>;
 };
 
-export const myRouter = generateRouter(myRoutes);
+export const myRouter = generateRouterForReactRouter(myRoutes);

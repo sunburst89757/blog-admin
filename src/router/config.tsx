@@ -86,7 +86,9 @@ const isInterceptRoute = (route: RouteObject): boolean => {
   return true;
 };
 // 后端的路由结构生成前端需要的配置路由结构类似myRoutes
-const generateRouterForBackEnd = (routes: IEndRoute[]): RouteObject[] => {
+export const generateRouterForBackEnd = (
+  routes: IEndRoute[]
+): RouteObject[] => {
   const myRoutes: RouteObject[] = [];
   routes.forEach((route) => {
     let routeObj: RouteObject = {
@@ -129,7 +131,7 @@ const generateRouterForBackEnd = (routes: IEndRoute[]): RouteObject[] => {
   return myRoutes;
 };
 // 根据路由配置生成react router dom需要的路由结构
-const generateRouterForReactRouter = (routes: RouteObject[]) => {
+export const generateRouterForReactRouter = (routes: RouteObject[]) => {
   return routes.map((route) => {
     if (route.children) {
       route.children = generateRouterForReactRouter(route.children);

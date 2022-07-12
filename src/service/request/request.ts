@@ -35,7 +35,7 @@ export class MyRequest {
       (res: AxiosResponse) => {
         // console.log(res, "公共响应拦截成功");
         store.dispatch(setLoading({ loading: false }));
-        if (res.data.code === 401) {
+        if (res.data.code === 500) {
           store.dispatch(incrementDatedNum());
           if (store.getState().user.datedNum === 1) {
             store.dispatch(changeisShowReloginModal());

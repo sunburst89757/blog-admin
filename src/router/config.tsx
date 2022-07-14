@@ -184,3 +184,20 @@ const RouterBeforeEach = ({ children, title }: interceptOBj) => {
 };
 
 export const myRouter = generateRouterForReactRouter(myRoutes);
+export const generateAccessRoutes1 = (routes: IEndRoute[]): string[] => {
+  const res: string[] = [];
+  routes.forEach((route) => {
+    let path: string = "/";
+    path += route.path;
+    if (route.children && route.children.length > 0) {
+      route.children.forEach((routeChild) => {
+        let nestRoute: string = path;
+        nestRoute += "/" + routeChild.path;
+        res.push(nestRoute);
+      });
+    } else {
+      res.push(path);
+    }
+  });
+  return res;
+};

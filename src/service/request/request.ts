@@ -44,7 +44,13 @@ export class MyRequest {
         return res.data;
       },
       (err) => {
-        // console.log(err, "公共响应拦截失败");
+        console.log(err, "公共响应拦截失败");
+        if (err.response.status === 500) {
+          store.dispatch(incrementDatedNum());
+          if (store.getState().user.datedNum === 1) {
+            store.dispatch(changeisShowReloginModal());
+          }
+        }
         store.dispatch(setLoading({ loading: false }));
         return Promise.reject(err);
       }

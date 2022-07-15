@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RouteObject } from "react-router-dom";
-import { myRouter } from "../../router/config";
+import { initialMenuRoutes } from "../../router/config";
+import { cache } from "../../utils/localStorage";
 const isIncludeRoute = (
   route: RouteObject[],
   routes: RouteObject[]
@@ -15,10 +16,12 @@ const isIncludeRoute = (
 type IPermissonType = {
   routes: RouteObject[];
   endPermission: string[];
+  accessRoutes: string[];
 };
 const initialState: IPermissonType = {
-  routes: myRouter,
-  endPermission: [""]
+  routes: initialMenuRoutes,
+  endPermission: [],
+  accessRoutes: []
 };
 const permissonSlice = createSlice({
   name: "permission",
@@ -34,14 +37,23 @@ const permissonSlice = createSlice({
         const GithubLink = state.routes[index];
         state.routes.splice(index, 1);
         state.routes.push(GithubLink);
+        cache.setItem("menuRoutes", state.routes);
       }
     },
     updateEndPermission: (state, action: PayloadAction<string[]>) => {
       state.endPermission = action.payload;
     },
+    updateAccessRoutes: (state, action: PayloadAction<string[]>) => {
+      state.accessRoutes = [...action.payload];
+      cache.setItem("accessRoutes", state.accessRoutes);
+    },
     resetInitialState: () => initialState
   }
 });
-export const { addRoutes, updateEndPermission, resetInitialState } =
-  permissonSlice.actions;
+export const {
+  addRoutes,
+  updateEndPermission,
+  resetInitialState,
+  updateAccessRoutes
+} = permissonSlice.actions;
 export const permissionReducer = permissonSlice.reducer;

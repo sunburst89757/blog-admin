@@ -1,14 +1,10 @@
 import { ReactNode, useEffect, useMemo } from "react";
-import { RouteObject } from "react-router-dom";
-import { getUserMenuList, getUserMenuPerms } from "../api/permission";
-import { getUserInfo } from "../api/user";
+import { RouteObject, useLocation } from "react-router-dom";
 import { LazyLoad } from "../components/LazyLoad";
 import { Redirect } from "../components/Redirect";
 import MyLayout from "../Layout";
 import { Login } from "../pages/Login";
-import { addRoutes, updateEndPermission } from "../store/module/permission";
-import { updateUserInfo } from "../store/module/user";
-import { IEndRoute, useAppDispatch, useAppSelector } from "../store/types";
+import { IEndRoute, useAppSelector } from "../store/types";
 import { cache } from "../utils/localStorage";
 
 type interceptOBj = {
@@ -34,6 +30,29 @@ const siderRoutes: RouteObject[] = [
         element: <LazyLoad path="/Dashboard"></LazyLoad>,
         meta: {
           title: "首页"
+        }
+      }
+    ]
+  },
+  {
+    path: "/systemSetting",
+    element: <MyLayout></MyLayout>,
+    meta: {
+      title: "系统管理"
+    },
+    children: [
+      {
+        path: "userManage",
+        element: <LazyLoad path="/systemSetting/userManage"></LazyLoad>,
+        meta: {
+          title: "用户管理"
+        }
+      },
+      {
+        path: "roleManage",
+        element: <LazyLoad path="/systemSetting/roleManage"></LazyLoad>,
+        meta: {
+          title: "角色管理"
         }
       }
     ]
@@ -79,7 +98,8 @@ const isInterceptRoute = (route: RouteObject): boolean => {
   if (
     route.children ||
     route.meta.title === "登录" ||
-    route.meta.title === "404"
+    route.meta.title === "404" ||
+    route.meta.title === "首页"
   ) {
     return false;
   }
@@ -149,8 +169,8 @@ export const generateRouterForReactRouter = (routes: RouteObject[]) => {
 };
 // 路由拦截器组件
 const RouterBeforeEach = ({ children, title }: interceptOBj) => {
-  const dispatch = useAppDispatch();
-  const userInfo = useAppSelector((state) => state.user.userInfo);
+  const accessRoutes = useAppSelector((state) => state.permission.accessRoutes);
+  const location = useLocation();
   // 验证是否登录（刷新）
   const authLogin = useMemo(() => {
     const token = cache.getItem("token");
@@ -158,33 +178,53 @@ const RouterBeforeEach = ({ children, title }: interceptOBj) => {
       return false;
     } else {
       // 获取用户的角色 菜单路由 权限信息
-      if (!userInfo.username) {
-        // 说明没有获取用户的角色，第一次登录需要获取用户信息 获取菜单和权限 | 或者说是刷新导致的
-        getUserInfo().then((res) => {
-          dispatch(updateUserInfo(res.data));
-        });
-        getUserMenuList().then((res) => {
-          // 后端生成需要的路由结构
-          const accessibleRoutes = generateRouterForBackEnd(res.data);
-          // 生成react router需要的路由结构
-          const routes = generateRouterForReactRouter(accessibleRoutes);
-          dispatch(addRoutes(routes));
-        });
-        getUserMenuPerms().then((res) => {
-          dispatch(updateEndPermission(res.data));
-        });
-      }
+      // if (accessRoutes.length === 0) {
+      //   // 说明没有获取用户的角色，第一次登录需要获取用户信息 获取菜单和权限 | 或者说是刷新导致的
+      //   getUserInfo().then((res) => {
+      //     dispatch(updateUserInfo(res.data));
+      //   });
+      //   getUserMenuList().then((res) => {
+      //     // 后端生成需要的菜单结构
+      //     const menuRoutes = generateRouterForBackEnd(res.data);
+      //     const accessRoutes = generateAccessRoutes(res.data);
+      //     // 生成react router需要的路由结构
+      //     // const routes = generateRouterForReactRouter(accessibleRoutes);
+      //     dispatch(addRoutes(menuRoutes));
+      //     dispatch(updateAccessRoutes(accessRoutes));
+      //   });
+      //   getUserMenuPerms().then((res) => {
+      //     dispatch(updateEndPermission(res.data));
+      //   });
+      // }
       return true;
     }
-  }, [dispatch, userInfo.username]);
+  }, []);
+  const authRoute = useMemo(() => {
+    if (!cache.getItem("accessRoutes")) {
+      return accessRoutes.includes(location.pathname);
+    }
+    return cache.getItem("accessRoutes").includes(location.pathname);
+  }, [location.pathname, accessRoutes]);
   useEffect(() => {
     document.title = title;
   });
-  return <div>{authLogin ? children : <Redirect to="/login"></Redirect>}</div>;
+  return (
+    <div>
+      {authLogin ? (
+        authRoute ? (
+          children
+        ) : (
+          <Redirect to="/404"></Redirect>
+        )
+      ) : (
+        <Redirect to="/login"></Redirect>
+      )}
+    </div>
+  );
 };
 
 export const myRouter = generateRouterForReactRouter(myRoutes);
-export const generateAccessRoutes1 = (routes: IEndRoute[]): string[] => {
+export const generateAccessRoutes = (routes: IEndRoute[]): string[] => {
   const res: string[] = [];
   routes.forEach((route) => {
     let path: string = "/";
@@ -201,3 +241,7 @@ export const generateAccessRoutes1 = (routes: IEndRoute[]): string[] => {
   });
   return res;
 };
+export const initialMenuRoutes = [
+  siderRoutes[0],
+  siderRoutes[siderRoutes.length - 1]
+];

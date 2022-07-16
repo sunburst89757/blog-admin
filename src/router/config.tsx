@@ -54,6 +54,74 @@ const siderRoutes: RouteObject[] = [
         meta: {
           title: "角色管理"
         }
+      },
+      {
+        path: "menuManage",
+        element: <LazyLoad path="/systemSetting/menuManage"></LazyLoad>,
+        meta: {
+          title: "菜单管理"
+        }
+      }
+    ]
+  },
+  {
+    path: "/articleModelSetting",
+    element: <MyLayout></MyLayout>,
+    meta: {
+      title: "文章模块管理"
+    },
+    children: [
+      {
+        path: "articleManage",
+        element: (
+          <LazyLoad path="/articleModelSetting/articleManage"></LazyLoad>
+        ),
+        meta: {
+          title: "文章管理"
+        }
+      },
+      {
+        path: "categoryManage",
+        element: (
+          <LazyLoad path="/articleModelSetting/categoryManage"></LazyLoad>
+        ),
+        meta: {
+          title: "专栏管理"
+        }
+      },
+      {
+        path: "commentManage",
+        element: (
+          <LazyLoad path="/articleModelSetting/commentManage"></LazyLoad>
+        ),
+        meta: {
+          title: "评论管理"
+        }
+      },
+      {
+        path: "messageManage",
+        element: (
+          <LazyLoad path="/articleModelSetting/messageManage"></LazyLoad>
+        ),
+        meta: {
+          title: "消息管理"
+        }
+      },
+      {
+        path: "notificationManage",
+        element: (
+          <LazyLoad path="/articleModelSetting/notificationManage"></LazyLoad>
+        ),
+        meta: {
+          title: "通知管理"
+        }
+      },
+      {
+        path: "tagManage",
+        element: <LazyLoad path="/articleModelSetting/tagManage"></LazyLoad>,
+        meta: {
+          title: "标签管理"
+        }
       }
     ]
   },

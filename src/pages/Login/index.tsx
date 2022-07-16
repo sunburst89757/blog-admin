@@ -7,6 +7,7 @@ import { useCallback, useEffect } from "react";
 import { useRequest } from "ahooks";
 import { login } from "../../api/user";
 import { cache } from "../../utils/localStorage";
+import { useResetState } from "../../hooks/useResettState";
 
 export function Login() {
   const navigate = useNavigate();
@@ -30,8 +31,14 @@ export function Login() {
     [handleLogin]
   );
   const [form] = Form.useForm<userType>();
+  const reset = useResetState();
   useEffect(() => {
     document.title = "登录";
+  });
+  useEffect(() => {
+    // 每次到登录页面都清除所有状态 包括登出 登录过期重定向
+    cache.clear();
+    reset();
   });
   return (
     <div className={style.loginContainer}>

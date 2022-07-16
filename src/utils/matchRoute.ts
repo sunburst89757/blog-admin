@@ -6,6 +6,7 @@ export const matchRoute = (routes: RouteObject[], route: string): tabObject => {
   const routeArr = route.split("/");
   let title: string = "";
   console.log(routeArr);
+  console.log(routes);
   if (routeArr.length === 2) {
     // 只能是一级路由 一定是 / 作为一级路由 dashboard作为二级路由
     if (routeArr[1] === "") {

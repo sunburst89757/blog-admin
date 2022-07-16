@@ -2,8 +2,6 @@ import { Layout, Button, Dropdown, Space, Menu } from "antd";
 import { MenuUnfoldOutlined, MenuFoldOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../../api/user";
-import { useResetState } from "../../hooks/useResettState";
-import { cache } from "../../utils/localStorage";
 import style from "./Header.module.scss";
 import { useAppSelector } from "../../store/types";
 import { useCallback, useRef } from "react";
@@ -20,16 +18,12 @@ export function MyHeader({ isCollapse, onClick }: propType) {
     manual: true,
     onSuccess: () => {
       navigate("/login");
-      // 重置redux状态
-      cache.clear();
-
-      reset();
     },
     onError: (err) => {
       console.log(err);
     }
   });
-  const reset = useResetState();
+
   const onClickDrop = useCallback(
     (menuInfo: any) => {
       const { key } = menuInfo;

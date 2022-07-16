@@ -16,7 +16,7 @@ export const config: RequestConfig = {
     //   console.log(err, "特有的请求拦截失败");
     // },
     responseSuccess: (res) => {
-      console.log("特有的响应拦截成功", res);
+      // console.log("特有的响应拦截成功", res);
       if ((res as any).code !== 200) {
         message.error((res as any).message || "未知错误");
       }

@@ -16,6 +16,8 @@
     "ahooks": "^3.3.10",
     "antd": "^4.20.0",
     "axios": "^0.27.1",
+    "crypto-js": "^4.1.1",
+    "i": "^0.3.7",
     "lodash": "^4.17.21",
     "node-sass": "npm:dart-sass@^1.25.0",
     "normalize.css": "^8.0.1",
@@ -58,6 +60,7 @@
     ]
   },
   "devDependencies": {
+    "@types/crypto-js": "^4.1.1",
     "@types/lodash": "^4.14.182",
     "@types/react-transition-group": "^4.4.4",
     "@types/redux-recycle": "^1.2.3",

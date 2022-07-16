@@ -1,11 +1,13 @@
+import { decrypto, encrypto } from "./encrypt";
+
 class Cache {
   setItem(key: string, val: any) {
-    localStorage.setItem(key, JSON.stringify(val));
+    localStorage.setItem(key, encrypto(val));
   }
   getItem(key: string) {
     const val = localStorage.getItem(key);
     if (val) {
-      return JSON.parse(val);
+      return decrypto(val);
     }
     return val;
   }

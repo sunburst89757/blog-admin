@@ -7,4 +7,5 @@ export interface Interceptors {
 }
 export interface RequestConfig extends AxiosRequestConfig {
   interceptors?: Interceptors;
+  successMsg?: string;
 }

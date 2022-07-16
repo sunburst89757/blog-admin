@@ -15,7 +15,8 @@ export function login(params: requestParams) {
   return myRequest<requestParams, Res>({
     url: "/login/login",
     params,
-    method: "post"
+    method: "post",
+    successMsg: "登录成功"
   });
 }
 export function getUserInfo() {

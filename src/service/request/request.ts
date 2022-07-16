@@ -7,6 +7,8 @@ import {
   incrementDatedNum,
   setLoading
 } from "../../store/module/user";
+import { message } from "antd";
+import { IMyResponse } from "..";
 export class MyRequest {
   service: AxiosInstance;
   constructor(config: RequestConfig) {
@@ -44,7 +46,6 @@ export class MyRequest {
         return res.data;
       },
       (err) => {
-        console.log(err, "公共响应拦截失败");
         if (err.response.status === 500) {
           store.dispatch(incrementDatedNum());
           if (store.getState().user.datedNum === 1) {
@@ -61,7 +62,7 @@ export class MyRequest {
       config.interceptors?.responseErr
     );
   }
-  request<T>(config: RequestConfig): Promise<T> {
+  request<T = IMyResponse>(config: RequestConfig): Promise<T> {
     // 这个return才是真正执行请求，在执行请求前进行请求拦截--目的就是改变config
     if (config?.interceptors?.requestSuccess) {
       config = config.interceptors.requestSuccess(config);
@@ -70,6 +71,9 @@ export class MyRequest {
       this.service
         .request<any, T>(config)
         .then((res) => {
+          if ((res as any).success && config.successMsg) {
+            message.success(config.successMsg);
+          }
           // 响应成功的拦截
           if (config.interceptors?.responseSuccess) {
             res = config.interceptors?.responseSuccess<T>(res);

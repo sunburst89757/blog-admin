@@ -2,6 +2,10 @@
 
 这是一个利用 react18 + typescript 实现的 博客后台管理系统
 
+## 权限管理
+
+本系统实现页面级别权限，具体实现原理见[本文](https://sunburst89757.github.io/my-blogs/blog/react-admin-design)
+
 ## 特性
 
 - react18: 函数式组件开发

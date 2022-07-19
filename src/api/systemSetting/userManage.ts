@@ -40,3 +40,11 @@ export function addUser(data: IAddUserType) {
     successMsg: "添加成功"
   });
 }
+export function updateUser(data: IAddUserType) {
+  return myRequest<any, any>({
+    url: "/sys/user/updateOneUser",
+    method: "post",
+    data,
+    successMsg: "修改用户信息成功"
+  });
+}

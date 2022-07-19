@@ -1,6 +1,10 @@
 import { Button, Col, Form, Input, Modal, Row, Space } from "antd";
-import { useCallback } from "react";
-import { addUser } from "../../../../api/systemSetting/userManage";
+import { useCallback, useEffect } from "react";
+import {
+  addUser,
+  IUserList,
+  updateUser
+} from "../../../../api/systemSetting/userManage";
 export interface IAddUserType {
   avatar?: string;
   email: string;
@@ -10,27 +14,50 @@ export interface IAddUserType {
   remark?: string;
   sex: number;
   username: string;
+  id?: number;
 }
 export function AddUser({
+  type,
   visible,
   handleOk,
-  handleCancel
+  handleCancel,
+  userInfo
 }: {
+  type: string;
   visible: boolean;
+  userInfo?: IUserList;
   handleOk: () => any;
   handleCancel: () => any;
 }) {
-  const [form] = Form.useForm<IAddUserType>();
+  const [form] = Form.useForm<IUserList>();
   const onFinish = useCallback(() => {
-    addUser(form.getFieldsValue()).then((res) => {
-      if (res.success) {
-        handleOk();
-      }
-    });
-  }, [form, handleOk]);
+    if (type === "add") {
+      addUser(form.getFieldsValue()).then((res) => {
+        if (res.success) {
+          handleOk();
+        }
+      });
+    } else {
+      updateUser({ ...form.getFieldsValue(), id: userInfo?.id! }).then(
+        (res) => {
+          if (res.success) {
+            handleOk();
+          }
+        }
+      );
+    }
+  }, [form, handleOk, type]);
+  useEffect(() => {
+    form.setFieldsValue({ ...userInfo });
+  });
   return (
     <>
-      <Modal title="添加用户" visible={visible} width={1000} footer={null}>
+      <Modal
+        title={type === "add" ? "新增用户" : "修改用户信息"}
+        visible={visible}
+        width={1000}
+        footer={null}
+      >
         <Form
           name="basic"
           labelCol={{ span: 4 }}

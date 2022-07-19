@@ -9,5 +9,5 @@ export interface ISortPagination<T> extends IPageInformation {
 }
 export interface IPageType {
   pageSize: number;
-  page: number;
+  pageNum: number;
 }

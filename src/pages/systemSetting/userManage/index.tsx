@@ -33,7 +33,7 @@ type ITotal = {
 };
 export interface IQueryParams extends IQueryForm {
   pageSize: number;
-  page: number;
+  pageNum: number;
 }
 const rowSelection = {
   onChange: (selectedRowKeys: React.Key[], selectedRows: IUserList[]) => {
@@ -48,7 +48,7 @@ const rowSelection = {
 export default function UserManage() {
   const [queryForm] = Form.useForm<IQueryForm>();
   const [pageInformation, setPageInformation] = useState<IPageType>({
-    page: 1,
+    pageNum: 1,
     pageSize: 10
   });
   const [total, setTotal] = useState<ITotal>({
@@ -56,6 +56,8 @@ export default function UserManage() {
     totalPage: 1
   });
   const [isAdd, setisAdd] = useState(false);
+  const [isUpdate, setisUpdate] = useState(false);
+
   const [userList, setUserList] = useState<IUserList[]>()!;
   const columns = useRef<ColumnsType<IUserList>>([
     {
@@ -119,51 +121,100 @@ export default function UserManage() {
           >
             删除
           </Button>
-          <Button type="link">修改</Button>
+          <Button
+            type="link"
+            onClick={() => {
+              setisUpdate(true);
+              handleEdit(record);
+            }}
+          >
+            修改
+          </Button>
         </Space>
       )
     }
   ]);
+  // 查询参数
+  const params = useRef<IQueryParams>({
+    pageNum: 1,
+    pageSize: 10
+  });
+  // 选中用户的信息
+  const currentUserInfo = useRef<IUserList>();
+  const getDataList = useCallback(() => {
+    getUserList(params.current).then((res) => {
+      setUserList(res.data.list);
+      setPageInformation((state) => ({
+        pageNum: res.data.pageNum,
+        pageSize: 10
+      }));
+      setTotal(() => ({
+        total: res.data.total,
+        totalPage: res.data.totalPage
+      }));
+    });
+  }, [setPageInformation, setUserList]);
+  // 查询按钮
   const onFinish = (values: IQueryForm) => {
+    params.current = {
+      pageNum: pageInformation.pageNum,
+      pageSize: pageInformation.pageSize,
+      ...queryForm.getFieldsValue()
+    };
     getDataList();
   };
   const onReset = useCallback(() => {
     queryForm.resetFields();
+    params.current = {
+      pageNum: pageInformation.pageNum,
+      pageSize: pageInformation.pageSize,
+      ...queryForm.getFieldsValue()
+    };
     getDataList();
-  }, [queryForm]);
+  }, [
+    queryForm,
+    pageInformation.pageNum,
+    pageInformation.pageSize,
+    getDataList
+  ]);
   const onFinishFailed = (errorInfo: any) => {
     console.log("表单验证不通过:", errorInfo);
   };
   const changeShowSize = useCallback((current: number, size: number) => {
     console.log(current, size);
   }, []);
-  const onChange = useCallback((pageNumber: number) => {
-    console.log("Page: ", pageNumber);
-  }, []);
-  const handleDelete = useCallback((userId: number) => {
-    deleteUser(userId).then((res) => {
+  const onChange = useCallback(
+    (pageNumber: number) => {
+      console.log(pageNumber, "页码");
+      params.current = {
+        pageNum: pageNumber,
+        pageSize: pageInformation.pageSize
+      };
+      setPageInformation({
+        pageNum: pageNumber,
+        pageSize: pageInformation.pageSize
+      });
       getDataList();
-    });
+    },
+    [pageInformation.pageSize, getDataList]
+  );
+  const handleDelete = useCallback(
+    (userId: number) => {
+      deleteUser(userId).then((res) => {
+        getDataList();
+      });
+    },
+    [getDataList]
+  );
+  const handleEdit = useCallback((userInfo: IUserList) => {
+    setisUpdate(true);
+    currentUserInfo.current = userInfo;
   }, []);
   // 首次渲染
   useEffect(() => {
     getDataList();
   }, []);
-  const getDataList = useCallback(() => {
-    getUserList({ ...queryForm.getFieldsValue(), ...pageInformation }).then(
-      (res) => {
-        setUserList(res.data.list);
-        setPageInformation((state) => ({
-          page: res.data.pageNum,
-          pageSize: 10
-        }));
-        setTotal(() => ({
-          total: res.data.total,
-          totalPage: res.data.totalPage
-        }));
-      }
-    );
-  }, [pageInformation, queryForm, setPageInformation, setUserList]);
+
   return (
     <div>
       <TableLayout>
@@ -243,6 +294,7 @@ export default function UserManage() {
             pagination={false}
             size="middle"
             scroll={{ y: 300 }}
+            bordered
           />
           <div className={style.pagination}>
             <Pagination
@@ -259,6 +311,7 @@ export default function UserManage() {
         </>
       </TableLayout>
       <AddUser
+        type="add"
         visible={isAdd}
         handleOk={() => {
           setisAdd(false);
@@ -266,6 +319,18 @@ export default function UserManage() {
         }}
         handleCancel={() => {
           setisAdd(false);
+        }}
+      ></AddUser>
+      <AddUser
+        type="update"
+        visible={isUpdate}
+        userInfo={currentUserInfo.current}
+        handleOk={() => {
+          setisUpdate(false);
+          getDataList();
+        }}
+        handleCancel={() => {
+          setisUpdate(false);
         }}
       ></AddUser>
     </div>

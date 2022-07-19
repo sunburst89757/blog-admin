@@ -11,14 +11,14 @@ export function MyContent() {
     <Content className={style.container}>
       <MyTabs></MyTabs>
       <ReLoginModal></ReLoginModal>
-      <PageTransition
+      {/* <PageTransition
         preset="moveToLeftFromRight"
         transitionKey={location.pathname}
         enterAnimation="moveFromLeft"
         exitAnimation="moveToRight"
-      >
-        <Outlet></Outlet>
-      </PageTransition>
+      > */}
+      <Outlet></Outlet>
+      {/* </PageTransition> */}
     </Content>
   );
 }

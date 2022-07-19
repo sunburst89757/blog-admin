@@ -241,6 +241,8 @@ export default function UserManage() {
             columns={columns.current}
             rowSelection={{ type: "checkbox", ...rowSelection }}
             pagination={false}
+            size="middle"
+            scroll={{ y: 300 }}
           />
           <div className={style.pagination}>
             <Pagination

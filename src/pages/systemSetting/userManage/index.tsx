@@ -1,4 +1,4 @@
-import { SearchOutlined, UndoOutlined } from "@ant-design/icons";
+import { PlusOutlined, SearchOutlined, UndoOutlined } from "@ant-design/icons";
 import {
   Button,
   Col,
@@ -19,6 +19,7 @@ import {
 } from "../../../api/systemSetting/userManage";
 import { IPageType } from "../../../api/types";
 import { TableLayout } from "../../../components/TableLayout";
+import { AddUser } from "./components/AddUser";
 import style from "./test.module.scss";
 type IQueryForm = {
   username?: string;
@@ -54,6 +55,7 @@ export default function UserManage() {
     total: 1,
     totalPage: 1
   });
+  const [isAdd, setisAdd] = useState(false);
   const [userList, setUserList] = useState<IUserList[]>()!;
   const columns = useRef<ColumnsType<IUserList>>([
     {
@@ -219,6 +221,15 @@ export default function UserManage() {
                     >
                       重置
                     </Button>
+                    <Button
+                      type="primary"
+                      icon={<PlusOutlined />}
+                      onClick={() => {
+                        setisAdd(true);
+                      }}
+                    >
+                      添加用户
+                    </Button>
                   </Space>
                 </Form.Item>
               </Col>
@@ -245,6 +256,16 @@ export default function UserManage() {
           </div>
         </>
       </TableLayout>
+      <AddUser
+        visible={isAdd}
+        handleOk={() => {
+          setisAdd(false);
+          getDataList();
+        }}
+        handleCancel={() => {
+          setisAdd(false);
+        }}
+      ></AddUser>
     </div>
   );
 }

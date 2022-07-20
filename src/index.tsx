@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { store } from "./store";
 import { BrowserRouter } from "react-router-dom";
-import zhCN from "antd/lib/locale/zh_CN";
+import zhCN from "antd/es/locale/zh_CN";
 import { ConfigProvider } from "antd";
 import { Provider } from "react-redux";
 import reportWebVitals from "./reportWebVitals";

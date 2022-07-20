@@ -37,8 +37,11 @@ export function UserModal({
     }
   }, [form, handleOk, type, userInfo?.id]);
   useEffect(() => {
-    form.setFieldsValue({ ...userInfo });
-  });
+    // 消除警告提示 useEffect里使用form方法必须在组件挂载后实施
+    if (visible) {
+      form.setFieldsValue({ ...userInfo });
+    }
+  }, [visible]);
   return (
     <>
       <Modal

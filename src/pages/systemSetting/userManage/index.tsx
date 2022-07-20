@@ -19,8 +19,8 @@ import {
 } from "../../../api/systemSetting/userManage";
 import { IPageType } from "../../../api/types";
 import { TableLayout } from "../../../components/TableLayout";
-import { UserModal } from "./components/AddUser";
-import style from "./test.module.scss";
+import { UserModal } from "./components/UserModal";
+import style from "./userManage.module.scss";
 type IQueryForm = {
   username?: string;
   phone?: string;
@@ -244,8 +244,8 @@ export default function UserManage() {
                   <Input allowClear placeholder="请输入昵称" />
                 </Form.Item>
               </Col>
-              <Col span={8} offset={8}>
-                <Form.Item wrapperCol={{ span: 16 }}>
+              <Col span={8}>
+                <Form.Item>
                   <Space>
                     <Button
                       type="primary"

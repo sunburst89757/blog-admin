@@ -5,18 +5,7 @@ import {
   IUserList,
   updateUser
 } from "../../../../api/systemSetting/userManage";
-export interface IAddUserType {
-  avatar?: string;
-  email: string;
-  nickname: string;
-  password: string;
-  phone: string;
-  remark?: string;
-  sex: number;
-  username: string;
-  id?: number;
-}
-export function AddUser({
+export function UserModal({
   type,
   visible,
   handleOk,
@@ -46,7 +35,7 @@ export function AddUser({
         }
       );
     }
-  }, [form, handleOk, type]);
+  }, [form, handleOk, type, userInfo?.id]);
   useEffect(() => {
     form.setFieldsValue({ ...userInfo });
   });

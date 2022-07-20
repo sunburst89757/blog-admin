@@ -1,5 +1,4 @@
 import { IQueryParams } from "../../pages/systemSetting/userManage";
-import { IAddUserType } from "../../pages/systemSetting/userManage/components/AddUser";
 import { myRequest } from "../../service";
 import { ISortPagination } from "../types";
 export type IUserList = {
@@ -32,7 +31,7 @@ export function deleteUser(params: number) {
     successMsg: "删除成功"
   });
 }
-export function addUser(data: IAddUserType) {
+export function addUser(data: IUserList) {
   return myRequest<any, any>({
     url: "/sys/user/addOneUser",
     method: "post",
@@ -40,7 +39,7 @@ export function addUser(data: IAddUserType) {
     successMsg: "添加成功"
   });
 }
-export function updateUser(data: IAddUserType) {
+export function updateUser(data: IUserList) {
   return myRequest<any, any>({
     url: "/sys/user/updateOneUser",
     method: "post",

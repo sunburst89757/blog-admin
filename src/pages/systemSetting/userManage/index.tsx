@@ -19,7 +19,7 @@ import {
 } from "../../../api/systemSetting/userManage";
 import { IPageType } from "../../../api/types";
 import { TableLayout } from "../../../components/TableLayout";
-import { AddUser } from "./components/AddUser";
+import { UserModal } from "./components/AddUser";
 import style from "./test.module.scss";
 type IQueryForm = {
   username?: string;
@@ -146,7 +146,7 @@ export default function UserManage() {
       setUserList(res.data.list);
       setPageInformation((state) => ({
         pageNum: res.data.pageNum,
-        pageSize: 10
+        pageSize: res.data.pageSize
       }));
       setTotal(() => ({
         total: res.data.total,
@@ -177,26 +177,16 @@ export default function UserManage() {
     pageInformation.pageSize,
     getDataList
   ]);
-  const onFinishFailed = (errorInfo: any) => {
-    console.log("表单验证不通过:", errorInfo);
-  };
-  const changeShowSize = useCallback((current: number, size: number) => {
-    console.log(current, size);
-  }, []);
   const onChange = useCallback(
-    (pageNumber: number) => {
-      console.log(pageNumber, "页码");
+    (pageNumber: number, pageSize: number) => {
+      console.log(pageNumber, "页码", pageSize);
       params.current = {
         pageNum: pageNumber,
-        pageSize: pageInformation.pageSize
+        pageSize: pageSize
       };
-      setPageInformation({
-        pageNum: pageNumber,
-        pageSize: pageInformation.pageSize
-      });
       getDataList();
     },
-    [pageInformation.pageSize, getDataList]
+    [getDataList]
   );
   const handleDelete = useCallback(
     (userId: number) => {
@@ -224,7 +214,6 @@ export default function UserManage() {
             labelCol={{ span: 4 }}
             labelAlign="right"
             onFinish={onFinish}
-            onFinishFailed={onFinishFailed}
             autoComplete="off"
             form={queryForm}
           >
@@ -272,15 +261,6 @@ export default function UserManage() {
                     >
                       重置
                     </Button>
-                    <Button
-                      type="primary"
-                      icon={<PlusOutlined />}
-                      onClick={() => {
-                        setisAdd(true);
-                      }}
-                    >
-                      添加用户
-                    </Button>
                   </Space>
                 </Form.Item>
               </Col>
@@ -295,6 +275,19 @@ export default function UserManage() {
             size="middle"
             scroll={{ y: 300 }}
             bordered
+            title={() => (
+              <Space>
+                <Button
+                  type="primary"
+                  icon={<PlusOutlined />}
+                  onClick={() => {
+                    setisAdd(true);
+                  }}
+                >
+                  添加用户
+                </Button>
+              </Space>
+            )}
           />
           <div className={style.pagination}>
             <Pagination
@@ -303,14 +296,15 @@ export default function UserManage() {
               total={total.total}
               onChange={onChange}
               pageSize={pageInformation.pageSize}
-              onShowSizeChange={changeShowSize}
+              pageSizeOptions={[10, 20]}
+              showSizeChanger={true}
               className={style.center}
               showTotal={(total) => `总计 ${total}`}
             />
           </div>
         </>
       </TableLayout>
-      <AddUser
+      <UserModal
         type="add"
         visible={isAdd}
         handleOk={() => {
@@ -320,8 +314,8 @@ export default function UserManage() {
         handleCancel={() => {
           setisAdd(false);
         }}
-      ></AddUser>
-      <AddUser
+      ></UserModal>
+      <UserModal
         type="update"
         visible={isUpdate}
         userInfo={currentUserInfo.current}
@@ -332,7 +326,7 @@ export default function UserManage() {
         handleCancel={() => {
           setisUpdate(false);
         }}
-      ></AddUser>
+      ></UserModal>
     </div>
   );
 }

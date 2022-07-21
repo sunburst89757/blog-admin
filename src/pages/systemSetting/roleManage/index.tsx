@@ -1,7 +1,7 @@
 import { Button } from "antd";
 import { ColumnsType } from "antd/lib/table";
 import { useRef } from "react";
-import { BasePage } from "../../../base-ui/BasePage";
+import { BasePage, IMyRef } from "../../../base-ui/BasePage";
 import { IFormItemConfig } from "../../../base-ui/MyForm";
 import {
   columns as columnsConfig,
@@ -13,7 +13,7 @@ export default function RoleManage() {
   const formItemsConfig = useRef<IFormItemConfig[]>(formItemConfig);
   const url = useRef<string>("/sys/role/getRoleList");
   const columns = useRef<ColumnsType<IRoleList>>(columnsConfig);
-  const myRef = useRef<any>();
+  const myRef = useRef<IMyRef>(null);
   return (
     <div>
       <BasePage<IQueryForm, IRoleList>
@@ -29,7 +29,6 @@ export default function RoleManage() {
           }
         }}
       >
-        {" "}
         测试
       </Button>
     </div>

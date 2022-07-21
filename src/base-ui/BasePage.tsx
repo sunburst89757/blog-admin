@@ -13,11 +13,14 @@ export interface IPageInformation {
 type PObject = {
   id: number;
 };
+type TObject = {
+  [prop: string]: string | number;
+};
 export interface IMyRef {
   getDataList: () => void;
 }
 // T是MyForm需要的查询表单所需的字段类型 U是Column必须是对象所以需要限制
-export const BasePage = <T extends object, U extends PObject>({
+export const BasePage = <T extends TObject, U extends PObject>({
   url,
   formItems,
   columns,
@@ -44,6 +47,7 @@ export const BasePage = <T extends object, U extends PObject>({
     pageSize: 10
   });
   const [dataList, setdataList] = useState<U[]>();
+  const [total, setTotal] = useState(1);
   const fetchDataList = useCallback(() => {
     getDataList<T & IPageInformation, U>(url, queryParams.current!).then(
       (res) => {
@@ -53,6 +57,7 @@ export const BasePage = <T extends object, U extends PObject>({
             pageSize: res.data.pageSize
           });
           setdataList(res.data.list);
+          setTotal(res.data.total);
         }
       }
     );
@@ -70,6 +75,18 @@ export const BasePage = <T extends object, U extends PObject>({
     },
     [fetchDataList, pageInformation]
   );
+  const onChange = useCallback(
+    (pageNumber: number, pageSize: number) => {
+      console.log(pageNumber, "页码", pageSize);
+      queryParams.current = {
+        ...queryParams.current,
+        pageNum: pageNumber,
+        pageSize: pageSize
+      } as any;
+      fetchDataList();
+    },
+    [fetchDataList]
+  );
   //  把myRef 用作 props回避使用forwardRef 和泛型组件的结合 useImperativeHandle第一个参数ref类型变量 真正的current只能在Ref<IMyRef>这个泛型里
   useImperativeHandle(myRef, () => ({
     getDataList() {
@@ -86,7 +103,17 @@ export const BasePage = <T extends object, U extends PObject>({
             dataSource={dataList}
             columns={columns}
             rowSelection={{ type: "checkbox", ...rowSelection.current }}
-            pagination={false}
+            pagination={{
+              position: ["bottomRight"],
+              showQuickJumper: true,
+              defaultCurrent: 1,
+              total: total,
+              onChange: onChange,
+              pageSize: pageInformation.pageSize,
+              pageSizeOptions: [10, 20],
+              showSizeChanger: true,
+              showTotal: (total) => `总计${total}`
+            }}
             size="middle"
             scroll={{ y: 300 }}
             bordered

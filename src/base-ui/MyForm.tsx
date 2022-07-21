@@ -95,7 +95,7 @@ export function MyForm<T extends Object>({
     for (let i = 0; i < rows; i++) {
       const arr: IFormItemConfig[] = [];
       for (let j = 0; j < itemEachRow; j++) {
-        arr.push(formItems[j]);
+        arr.push(formItems[j + i * itemEachRow]);
       }
       // 滤除不足一行的个数中的空
       res.push(arr.filter((item) => item));

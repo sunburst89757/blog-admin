@@ -1,10 +1,7 @@
 import { Button, Col, Form, Input, Modal, Row, Space } from "antd";
 import { useCallback, useEffect } from "react";
-import {
-  addUser,
-  IUserList,
-  updateUser
-} from "../../../../api/systemSetting/userManage";
+import { addUser, updateUser } from "../../../../api/systemSetting/userManage";
+import { IUserList } from "../config";
 export function UserModal({
   type,
   visible,

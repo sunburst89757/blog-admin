@@ -4,15 +4,11 @@ import { ColumnsType } from "antd/lib/table";
 import { useCallback, useRef, useState } from "react";
 import { deleteUser } from "../../../api/systemSetting/userManage";
 import { BasePage } from "../../../base-ui/BasePage";
-import {
-  IBasePageConfig,
-  IFunc,
-  useGetDataList
-} from "../../../hooks/useGetDataList";
+import { useGetDataList } from "../../../hooks/useGetDataList";
 import { UserModal } from "./components/UserModal";
 import { formItemConfig, IQueryForm, IUserList } from "./config";
 export default function UserManage() {
-  const [basePageConfig, getDataList] = useGetDataList(
+  const { basePageConfig, getDataList } = useGetDataList(
     formItemConfig,
     "/sys/user/listUser"
   );
@@ -99,7 +95,7 @@ export default function UserManage() {
     (userId: number) => {
       deleteUser(userId).then((res) => {
         if (res.success) {
-          (getDataList as IFunc)();
+          getDataList();
         }
       });
     },
@@ -127,14 +123,14 @@ export default function UserManage() {
             </Button>
           </Space>
         )}
-        {...(basePageConfig as IBasePageConfig)}
+        {...basePageConfig}
       ></BasePage>
       <UserModal
         type="add"
         visible={isAdd}
         handleOk={() => {
           setisAdd(false);
-          (getDataList as IFunc)();
+          getDataList();
         }}
         handleCancel={() => {
           setisAdd(false);
@@ -146,7 +142,7 @@ export default function UserManage() {
         userInfo={currentUserInfo.current}
         handleOk={() => {
           setisUpdate(false);
-          (getDataList as IFunc)();
+          getDataList();
         }}
         handleCancel={() => {
           setisUpdate(false);

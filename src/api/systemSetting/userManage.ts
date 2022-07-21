@@ -1,12 +1,5 @@
 import { IUserList } from "../../pages/systemSetting/userManage/config";
 import { myRequest } from "../../service";
-// export function getUserList(params: IQueryParams) {
-//   return myRequest<any, ISortPagination<IUserList>>({
-//     url: "/sys/user/listUser",
-//     method: "get",
-//     params
-//   });
-// }
 export function deleteUser(params: number) {
   return myRequest<any, any>({
     url: `/sys/user/deleteOneUser/${params}`,

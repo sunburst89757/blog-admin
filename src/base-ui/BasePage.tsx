@@ -1,6 +1,6 @@
-import { PlusOutlined } from "@ant-design/icons";
-import { Button, ConfigProvider, Space, Table } from "antd";
+import { ConfigProvider, Table } from "antd";
 import { ColumnsType } from "antd/lib/table";
+import { PanelRender } from "rc-table/lib/interface";
 import { Ref, useImperativeHandle } from "react";
 import { useCallback, useRef, useState } from "react";
 import { getDataList } from "../api/common";
@@ -16,6 +16,13 @@ type PObject = {
 type TObject = {
   [prop: string]: string | number;
 };
+type IProps<U> = {
+  url: string;
+  formItems: IFormItemConfig[];
+  columns: ColumnsType<U>;
+  myRef: Ref<IMyRef>;
+  headerBtns?: PanelRender<U>;
+};
 export interface IMyRef {
   getDataList: () => void;
 }
@@ -24,13 +31,9 @@ export const BasePage = <T extends TObject, U extends PObject>({
   url,
   formItems,
   columns,
-  myRef
-}: {
-  url: string;
-  formItems: IFormItemConfig[];
-  columns: ColumnsType<U>;
-  myRef: Ref<IMyRef>;
-}) => {
+  myRef,
+  headerBtns
+}: IProps<U>) => {
   // 查询的所有变量 page pageSize包括
   const queryParams = useRef<T & IPageInformation>();
   const rowSelection = useRef({
@@ -118,17 +121,7 @@ export const BasePage = <T extends TObject, U extends PObject>({
               size="middle"
               scroll={{ y: 300 }}
               bordered
-              title={() => (
-                <Space>
-                  <Button
-                    type="primary"
-                    icon={<PlusOutlined />}
-                    onClick={() => {}}
-                  >
-                    添加用户
-                  </Button>
-                </Space>
-              )}
+              title={headerBtns}
             />
           </ConfigProvider>
         </>

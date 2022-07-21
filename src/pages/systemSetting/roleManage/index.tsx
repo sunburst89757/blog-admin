@@ -1,19 +1,37 @@
+import { Button } from "antd";
+import { ColumnsType } from "antd/lib/table";
 import { useRef } from "react";
-import MyForm, { IFormItemConfig } from "../../../base-ui/MyForm";
-import { TableLayout } from "../../../components/TableLayout";
-import { formItemConfig } from "./config";
-type IQueryForm = {
-  name: string;
-  nickName: string;
-  date: string;
-};
+import { BasePage } from "../../../base-ui/BasePage";
+import { IFormItemConfig } from "../../../base-ui/MyForm";
+import {
+  columns as columnsConfig,
+  formItemConfig,
+  IQueryForm,
+  IRoleList
+} from "./config";
 export default function RoleManage() {
   const formItemsConfig = useRef<IFormItemConfig[]>(formItemConfig);
+  const url = useRef<string>("/sys/role/getRoleList");
+  const columns = useRef<ColumnsType<IRoleList>>(columnsConfig);
+  const myRef = useRef<any>();
   return (
     <div>
-      <TableLayout>
-        <MyForm<IQueryForm> formItems={formItemsConfig.current}></MyForm>
-      </TableLayout>
+      <BasePage<IQueryForm, IRoleList>
+        myRef={myRef}
+        url={url.current}
+        formItems={formItemsConfig.current}
+        columns={columns.current}
+      ></BasePage>
+      <Button
+        onClick={() => {
+          if (myRef.current) {
+            myRef.current.getDataList();
+          }
+        }}
+      >
+        {" "}
+        测试
+      </Button>
     </div>
   );
 }

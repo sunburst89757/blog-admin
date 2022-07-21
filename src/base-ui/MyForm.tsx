@@ -11,7 +11,7 @@ import {
   Button
 } from "antd";
 import { Rule } from "antd/lib/form";
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { nanoid } from "nanoid";
 import { SearchOutlined, UndoOutlined } from "@ant-design/icons";
 import style from "./MyForm.module.scss";
@@ -60,22 +60,31 @@ const initialIFormItemLayout: IFormItemLayout = {
 };
 const { Option } = Select;
 const { RangePicker } = DatePicker;
-export default function MyForm<T>({
+// T是表单的查询字段类型
+export function MyForm<T extends Object>({
   formConfig = initialFormConfig,
   formLayout = initialIFormItemLayout,
-  formItems
+  formItems,
+  handleSeacrh
 }: {
   formConfig?: IFormConfig;
   formLayout?: IFormItemLayout;
   formItems: IFormItemConfig[];
+  handleSeacrh?: (val: T) => void;
 }) {
   const [form] = Form.useForm<T>();
   const onFinish = useCallback(() => {
     console.log(form.getFieldsValue(), "表单子组件");
-  }, [form]);
+    if (handleSeacrh) {
+      handleSeacrh(form.getFieldsValue());
+    }
+  }, [form, handleSeacrh]);
   const onReset = useCallback(() => {
     form.resetFields();
-  }, [form]);
+    if (handleSeacrh) {
+      handleSeacrh(form.getFieldsValue());
+    }
+  }, [form, handleSeacrh]);
   const formItemArr = useMemo(() => {
     const res: IFormItemConfig[][] = [];
     const itmesNumber = formItems.length;
@@ -157,6 +166,11 @@ export default function MyForm<T>({
     },
     [onReset]
   );
+  useEffect(() => {
+    if (handleSeacrh) {
+      handleSeacrh(form.getFieldsValue());
+    }
+  }, []);
   return (
     <Form name="basic" {...formConfig} onFinish={onFinish} form={form}>
       {formItemArr.map((arr) => {

@@ -1,6 +1,5 @@
 import { IUserList } from "../../pages/systemSetting/userManage/config";
 import { myRequest } from "../../service";
-import { ISortPagination } from "../types";
 // export function getUserList(params: IQueryParams) {
 //   return myRequest<any, ISortPagination<IUserList>>({
 //     url: "/sys/user/listUser",

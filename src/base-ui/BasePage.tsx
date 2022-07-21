@@ -1,5 +1,5 @@
 import { PlusOutlined } from "@ant-design/icons";
-import { Button, Space, Table } from "antd";
+import { Button, ConfigProvider, Space, Table } from "antd";
 import { ColumnsType } from "antd/lib/table";
 import { Ref, useImperativeHandle } from "react";
 import { useCallback, useRef, useState } from "react";
@@ -47,7 +47,7 @@ export const BasePage = <T extends TObject, U extends PObject>({
     pageSize: 10
   });
   const [dataList, setdataList] = useState<U[]>();
-  const [total, setTotal] = useState(1);
+  const [total, setTotal] = useState(0);
   const fetchDataList = useCallback(() => {
     getDataList<T & IPageInformation, U>(url, queryParams.current!).then(
       (res) => {
@@ -98,37 +98,39 @@ export const BasePage = <T extends TObject, U extends PObject>({
       <TableLayout>
         <>
           <MyForm<T> formItems={formItems} handleSeacrh={handleSearch}></MyForm>
-          <Table
-            rowKey={(record) => record.id}
-            dataSource={dataList}
-            columns={columns}
-            rowSelection={{ type: "checkbox", ...rowSelection.current }}
-            pagination={{
-              position: ["bottomRight"],
-              showQuickJumper: true,
-              defaultCurrent: 1,
-              total: total,
-              onChange: onChange,
-              pageSize: pageInformation.pageSize,
-              pageSizeOptions: [10, 20],
-              showSizeChanger: true,
-              showTotal: (total) => `总计${total}`
-            }}
-            size="middle"
-            scroll={{ y: 300 }}
-            bordered
-            title={() => (
-              <Space>
-                <Button
-                  type="primary"
-                  icon={<PlusOutlined />}
-                  onClick={() => {}}
-                >
-                  添加用户
-                </Button>
-              </Space>
-            )}
-          />
+          <ConfigProvider renderEmpty={undefined}>
+            <Table
+              rowKey={(record) => record.id}
+              dataSource={dataList}
+              columns={columns}
+              rowSelection={{ type: "checkbox", ...rowSelection.current }}
+              pagination={{
+                position: ["bottomRight"],
+                showQuickJumper: true,
+                defaultCurrent: 1,
+                total: total,
+                onChange: onChange,
+                pageSize: pageInformation.pageSize,
+                pageSizeOptions: [10, 20],
+                showSizeChanger: true,
+                showTotal: (total) => `总计${total}`
+              }}
+              size="middle"
+              scroll={{ y: 300 }}
+              bordered
+              title={() => (
+                <Space>
+                  <Button
+                    type="primary"
+                    icon={<PlusOutlined />}
+                    onClick={() => {}}
+                  >
+                    添加用户
+                  </Button>
+                </Space>
+              )}
+            />
+          </ConfigProvider>
         </>
       </TableLayout>
     </div>

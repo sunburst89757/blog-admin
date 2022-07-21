@@ -3,14 +3,19 @@ import { Button, Space, Tag } from "antd";
 import { ColumnsType } from "antd/lib/table";
 import { useCallback, useRef, useState } from "react";
 import { deleteUser } from "../../../api/systemSetting/userManage";
-import { BasePage, IMyRef } from "../../../base-ui/BasePage";
-import { IFormItemConfig } from "../../../base-ui/MyForm";
+import { BasePage } from "../../../base-ui/BasePage";
+import {
+  IBasePageConfig,
+  IFunc,
+  useGetDataList
+} from "../../../hooks/useGetDataList";
 import { UserModal } from "./components/UserModal";
 import { formItemConfig, IQueryForm, IUserList } from "./config";
 export default function UserManage() {
-  const url = useRef<string>("/sys/user/listUser");
-  const formItemsConfig = useRef<IFormItemConfig[]>(formItemConfig);
-  // 列配置
+  const [basePageConfig, getDataList] = useGetDataList(
+    formItemConfig,
+    "/sys/user/listUser"
+  );
   const columns = useRef<ColumnsType<IUserList>>([
     {
       title: "用户名",
@@ -86,18 +91,20 @@ export default function UserManage() {
       )
     }
   ]);
-  const myRef = useRef<IMyRef>(null);
   const [isAdd, setisAdd] = useState(false);
   const [isUpdate, setisUpdate] = useState(false);
   // 选中用户的信息
   const currentUserInfo = useRef<IUserList>();
-  const handleDelete = useCallback((userId: number) => {
-    deleteUser(userId).then((res) => {
-      if (myRef.current) {
-        myRef.current.getDataList();
-      }
-    });
-  }, []);
+  const handleDelete = useCallback(
+    (userId: number) => {
+      deleteUser(userId).then((res) => {
+        if (res.success) {
+          (getDataList as IFunc)();
+        }
+      });
+    },
+    [getDataList]
+  );
   const handleEdit = useCallback((userInfo: IUserList) => {
     setisUpdate(true);
     currentUserInfo.current = userInfo;
@@ -106,8 +113,6 @@ export default function UserManage() {
   return (
     <div>
       <BasePage<IQueryForm, IUserList>
-        url={url.current}
-        formItems={formItemsConfig.current}
         columns={columns.current}
         headerBtns={() => (
           <Space>
@@ -122,16 +127,14 @@ export default function UserManage() {
             </Button>
           </Space>
         )}
-        myRef={myRef}
+        {...(basePageConfig as IBasePageConfig)}
       ></BasePage>
       <UserModal
         type="add"
         visible={isAdd}
         handleOk={() => {
           setisAdd(false);
-          if (myRef.current) {
-            myRef.current.getDataList();
-          }
+          (getDataList as IFunc)();
         }}
         handleCancel={() => {
           setisAdd(false);
@@ -143,9 +146,7 @@ export default function UserManage() {
         userInfo={currentUserInfo.current}
         handleOk={() => {
           setisUpdate(false);
-          if (myRef.current) {
-            myRef.current.getDataList();
-          }
+          (getDataList as IFunc)();
         }}
         handleCancel={() => {
           setisUpdate(false);

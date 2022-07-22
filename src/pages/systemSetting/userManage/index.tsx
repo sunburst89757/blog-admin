@@ -4,9 +4,14 @@ import { ColumnsType } from "antd/lib/table";
 import { useCallback, useRef, useState } from "react";
 import { deleteUser } from "../../../api/systemSetting/userManage";
 import { BasePage } from "../../../base-ui/BasePage";
+import { MyModalForm } from "../../../base-ui/MyModalForm";
 import { useGetDataList } from "../../../hooks/useGetDataList";
-import { UserModal } from "./components/UserModal";
-import { formItemConfig, IQueryForm, IUserList } from "./config";
+import {
+  formItemConfig,
+  IQueryForm,
+  IUserList,
+  ModalFormItems
+} from "./config";
 export default function UserManage() {
   const { basePageConfig, getDataList } = useGetDataList(
     formItemConfig,
@@ -77,7 +82,6 @@ export default function UserManage() {
           <Button
             type="link"
             onClick={() => {
-              setisUpdate(true);
               handleEdit(record);
             }}
           >
@@ -105,7 +109,6 @@ export default function UserManage() {
     setisUpdate(true);
     currentUserInfo.current = userInfo;
   }, []);
-  // 首次渲染
   return (
     <div>
       <BasePage<IQueryForm, IUserList>
@@ -125,8 +128,10 @@ export default function UserManage() {
         )}
         {...basePageConfig}
       ></BasePage>
-      <UserModal
+      <MyModalForm<IUserList>
         type="add"
+        title="添加用户"
+        url="/sys/user/addOneUser"
         visible={isAdd}
         handleOk={() => {
           setisAdd(false);
@@ -135,11 +140,13 @@ export default function UserManage() {
         handleCancel={() => {
           setisAdd(false);
         }}
-      ></UserModal>
-      <UserModal
+        formItems={ModalFormItems}
+      ></MyModalForm>
+      <MyModalForm<IUserList>
         type="update"
+        title="修改用户信息"
+        url="/sys/user/updateOneUser"
         visible={isUpdate}
-        userInfo={currentUserInfo.current}
         handleOk={() => {
           setisUpdate(false);
           getDataList();
@@ -147,7 +154,9 @@ export default function UserManage() {
         handleCancel={() => {
           setisUpdate(false);
         }}
-      ></UserModal>
+        formItems={ModalFormItems}
+        formInfo={currentUserInfo.current}
+      ></MyModalForm>
     </div>
   );
 }

@@ -11,10 +11,17 @@ import {
   Button
 } from "antd";
 import { Rule } from "antd/lib/form";
-import { useCallback, useEffect, useMemo } from "react";
+import {
+  Ref,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useMemo
+} from "react";
 import { nanoid } from "nanoid";
 import { SearchOutlined, UndoOutlined } from "@ant-design/icons";
 import style from "./MyForm.module.scss";
+import { FormInstance } from "antd/es/form/Form";
 type IGridType = {
   span: number;
 };
@@ -49,6 +56,18 @@ export interface IFormItemConfig<T = any> {
   // 有些子组件需要嵌套的子组件 Select组件需要子组件Option,暂时只针对Select Options
   options?: T[];
 }
+type IProps<T> = {
+  formConfig?: IFormConfig;
+  formLayout?: IFormItemLayout;
+  formItems: IFormItemConfig[];
+  handleSeacrh?: (val: T) => void;
+  searchBtns?: boolean;
+  children?: JSX.Element;
+  myRef?: Ref<IMyRef<T>>;
+};
+export type IMyRef<T> = {
+  getForm: () => FormInstance<T>;
+};
 const initialFormConfig: IFormConfig = {
   labelAlign: "right",
   labelCol: { span: 4 },
@@ -65,13 +84,11 @@ export function MyForm<T extends Object>({
   formConfig = initialFormConfig,
   formLayout = initialIFormItemLayout,
   formItems,
-  handleSeacrh
-}: {
-  formConfig?: IFormConfig;
-  formLayout?: IFormItemLayout;
-  formItems: IFormItemConfig[];
-  handleSeacrh?: (val: T) => void;
-}) {
+  handleSeacrh,
+  searchBtns = true,
+  children,
+  myRef
+}: IProps<T>) {
   const [form] = Form.useForm<T>();
   const onFinish = useCallback(() => {
     console.log(form.getFieldsValue(), "表单子组件");
@@ -100,24 +117,27 @@ export function MyForm<T extends Object>({
       // 滤除不足一行的个数中的空
       res.push(arr.filter((item) => item));
     }
-    // 计算最后查找重置按钮的位置
-    const lastArr = res[res.length - 1];
-    if (lastArr.length < itemEachRow) {
-      lastArr.push({ type: "btns", config: "" });
-    } else {
-      let tempArr: IFormItemConfig[] = [];
-      tempArr.push({
-        type: "btns",
-        config: {
-          offset: (itemEachRow - 1) * formLayout.colSpan!
-        }
-      });
-      res.push(tempArr);
+    if (searchBtns) {
+      // 计算最后查找重置按钮的位置
+      const lastArr = res[res.length - 1];
+      if (lastArr.length < itemEachRow) {
+        lastArr.push({ type: "btns", config: "" });
+      } else {
+        let tempArr: IFormItemConfig[] = [];
+        tempArr.push({
+          type: "btns",
+          config: {
+            offset: (itemEachRow - 1) * formLayout.colSpan!
+          }
+        });
+        res.push(tempArr);
+      }
     }
+
     console.log(res, "结果");
 
     return res;
-  }, [formItems, formLayout.colSpan]);
+  }, [formItems, formLayout.colSpan, searchBtns]);
   const component = useCallback(
     (formItemConfig: IFormItemConfig) => {
       switch (formItemConfig.type) {
@@ -166,6 +186,11 @@ export function MyForm<T extends Object>({
     },
     [onReset]
   );
+  // 把表单的form暴露出来
+  useImperativeHandle(myRef, () => ({
+    getForm: () => form
+  }));
+  // 初始化的时候使用
   useEffect(() => {
     if (handleSeacrh) {
       handleSeacrh(form.getFieldsValue());
@@ -196,6 +221,15 @@ export function MyForm<T extends Object>({
           </Row>
         );
       })}
+      {children ? (
+        <Row gutter={formLayout.rowGutter}>
+          <Col span={4} offset={20}>
+            {children}
+          </Col>
+        </Row>
+      ) : (
+        ""
+      )}
     </Form>
   );
 }

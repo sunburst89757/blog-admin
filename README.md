@@ -12,6 +12,7 @@
 - TypeScript: javaScript 的超集，支持静态类型检测
 - redux: 全局状态管理工具
 - react-router-dom6: 路由管理工具
+- vite 新一代构建工具
 
 ## 准备
 
@@ -35,7 +36,7 @@
   ```
 - 运行
   ```
-  npm run start
+  npm run dev
   ```
 - 登录使用
   ```

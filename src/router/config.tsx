@@ -27,7 +27,7 @@ const siderRoutes: RouteObject[] = [
     children: [
       {
         path: "dashboard",
-        element: <LazyLoad path="/Dashboard"></LazyLoad>,
+        element: <LazyLoad path="Dashboard"></LazyLoad>,
         meta: {
           title: "首页"
         }
@@ -43,21 +43,21 @@ const siderRoutes: RouteObject[] = [
     children: [
       {
         path: "userManage",
-        element: <LazyLoad path="/systemSetting/userManage"></LazyLoad>,
+        element: <LazyLoad path="systemSetting/userManage"></LazyLoad>,
         meta: {
           title: "用户管理"
         }
       },
       {
         path: "roleManage",
-        element: <LazyLoad path="/systemSetting/roleManage"></LazyLoad>,
+        element: <LazyLoad path="systemSetting/roleManage"></LazyLoad>,
         meta: {
           title: "角色管理"
         }
       },
       {
         path: "menuManage",
-        element: <LazyLoad path="/systemSetting/menuManage"></LazyLoad>,
+        element: <LazyLoad path="systemSetting/menuManage"></LazyLoad>,
         meta: {
           title: "菜单管理"
         }
@@ -73,9 +73,7 @@ const siderRoutes: RouteObject[] = [
     children: [
       {
         path: "articleManage",
-        element: (
-          <LazyLoad path="/articleModelSetting/articleManage"></LazyLoad>
-        ),
+        element: <LazyLoad path="articleModelSetting/articleManage"></LazyLoad>,
         meta: {
           title: "文章管理"
         }
@@ -83,7 +81,7 @@ const siderRoutes: RouteObject[] = [
       {
         path: "categoryManage",
         element: (
-          <LazyLoad path="/articleModelSetting/categoryManage"></LazyLoad>
+          <LazyLoad path="articleModelSetting/categoryManage"></LazyLoad>
         ),
         meta: {
           title: "专栏管理"
@@ -91,18 +89,14 @@ const siderRoutes: RouteObject[] = [
       },
       {
         path: "commentManage",
-        element: (
-          <LazyLoad path="/articleModelSetting/commentManage"></LazyLoad>
-        ),
+        element: <LazyLoad path="articleModelSetting/commentManage"></LazyLoad>,
         meta: {
           title: "评论管理"
         }
       },
       {
         path: "messageManage",
-        element: (
-          <LazyLoad path="/articleModelSetting/messageManage"></LazyLoad>
-        ),
+        element: <LazyLoad path="articleModelSetting/messageManage"></LazyLoad>,
         meta: {
           title: "消息管理"
         }
@@ -110,7 +104,7 @@ const siderRoutes: RouteObject[] = [
       {
         path: "notificationManage",
         element: (
-          <LazyLoad path="/articleModelSetting/notificationManage"></LazyLoad>
+          <LazyLoad path="articleModelSetting/notificationManage"></LazyLoad>
         ),
         meta: {
           title: "通知管理"
@@ -118,7 +112,7 @@ const siderRoutes: RouteObject[] = [
       },
       {
         path: "tagManage",
-        element: <LazyLoad path="/articleModelSetting/tagManage"></LazyLoad>,
+        element: <LazyLoad path="articleModelSetting/tagManage"></LazyLoad>,
         meta: {
           title: "标签管理"
         }
@@ -145,7 +139,7 @@ const myRoutes: RouteObject[] = [
   },
   {
     path: "/404",
-    element: <LazyLoad path="/NotFound"></LazyLoad>,
+    element: <LazyLoad path="NotFound"></LazyLoad>,
     meta: {
       title: "404",
       hidden: true

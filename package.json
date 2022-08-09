@@ -35,10 +35,9 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
     "prepare": "husky install",
     "commit": "cz"
   },
@@ -65,13 +64,16 @@
     "@types/lodash": "^4.14.182",
     "@types/react-transition-group": "^4.4.4",
     "@types/redux-recycle": "^1.2.3",
+    "@vitejs/plugin-react": "^2.0.0",
     "commitizen": "^4.2.4",
     "cz-conventional-changelog": "^3.3.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.0.0",
     "husky": "^7.0.0",
     "lint-staged": "^12.4.0",
-    "prettier": "^2.6.2"
+    "prettier": "^2.6.2",
+    "sass": "^1.54.3",
+    "vite": "^3.0.4"
   },
   "config": {
     "commitizen": {

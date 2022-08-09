@@ -69,8 +69,8 @@ export type IMyRef<T> = {
   getForm: () => FormInstance<T>;
 };
 const initialFormConfig: IFormConfig = {
-  labelAlign: "right",
-  labelCol: { span: 4 },
+  labelAlign: "left",
+  labelCol: { span: 3 },
   autoComplete: "off"
 };
 const initialIFormItemLayout: IFormItemLayout = {

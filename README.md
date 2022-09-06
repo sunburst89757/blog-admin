@@ -4,7 +4,7 @@
 
 ## 权限管理
 
-本系统实现页面级别权限，具体实现原理见[本文](https://sunburst89757.github.io/my-blogs/blog/react-admin-design)
+本系统实现页面级别权限，具体实现原理见[本文](https://sunburst89757.github.io/2022/07/15/react-admin-design/)
 
 ## 特性
 

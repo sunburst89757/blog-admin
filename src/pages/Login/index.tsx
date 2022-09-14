@@ -1,13 +1,13 @@
+import { LockOutlined, UserOutlined } from "@ant-design/icons";
+import { useMemoizedFn, useRequest } from "ahooks";
 import { Button, Checkbox, Form, Input } from "antd";
-import { UserOutlined, LockOutlined } from "@ant-design/icons";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { login } from "../../api/user";
+import { useResetState } from "../../hooks/useResettState";
+import { cache } from "../../utils/localStorage";
 import style from "./Login.module.scss";
 import { userType } from "./types";
-import { useNavigate } from "react-router-dom";
-import { useCallback, useEffect } from "react";
-import { useRequest } from "ahooks";
-import { login } from "../../api/user";
-import { cache } from "../../utils/localStorage";
-import { useResetState } from "../../hooks/useResettState";
 
 export function Login() {
   const navigate = useNavigate();
@@ -24,14 +24,12 @@ export function Login() {
     }
   });
   // 验证通过后登录
-  const onFinish = useCallback(
-    (val: userType) => {
-      handleLogin(val);
-    },
-    [handleLogin]
-  );
+  const onFinish = (val: userType) => {
+    handleLogin(val);
+  };
   const [form] = Form.useForm<userType>();
-  const reset = useResetState();
+  // 固化等待 useEvent的推出
+  const reset = useMemoizedFn(useResetState());
   useEffect(() => {
     document.title = "登录";
   });
@@ -39,7 +37,7 @@ export function Login() {
     // 每次到登录页面都清除所有状态 包括登出 登录过期重定向
     cache.clear();
     reset();
-  });
+  }, [reset]);
   return (
     <div className={style.loginContainer}>
       <div className={style.title}></div>

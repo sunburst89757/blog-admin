@@ -265,11 +265,12 @@ const RouterBeforeEach = ({ children, title }: interceptOBj) => {
     if (!cache.getItem("accessRoutes")) {
       return accessRoutes.includes(location.pathname);
     }
+    console.error("之ing");
     return cache.getItem("accessRoutes").includes(location.pathname);
   }, [location.pathname, accessRoutes]);
   useEffect(() => {
     document.title = title;
-  });
+  }, [title]);
   return (
     <div>
       {authLogin ? (

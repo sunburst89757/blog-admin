@@ -1,3 +1,4 @@
+import { useMemoizedFn } from "ahooks";
 import { Button, Result } from "antd";
 import { useEffect } from "react";
 import { getUserMenuList, getUserMenuPerms } from "../../api/permission";
@@ -11,12 +12,13 @@ import { updateUserInfo } from "../../store/module/user";
 import { useAppDispatch, useAppSelector } from "../../store/types";
 
 export default function NotFound() {
-  const dispatch = useAppDispatch();
+  const dispatch = useMemoizedFn(useAppDispatch());
   const username = useAppSelector((state) => state.user.userInfo.username);
   useEffect(() => {
     document.title = "not found";
   });
   useEffect(() => {
+    debugger;
     if (!username) {
       // 说明没有获取用户的角色，第一次登录需要获取用户信息 获取菜单和权限 | 或者说是刷新导致的
       getUserInfo().then((res) => {
@@ -34,7 +36,7 @@ export default function NotFound() {
       });
       window.history.go(-1);
     }
-  });
+  }, [dispatch, username]);
   return (
     <Result
       status="404"
